@@ -170,8 +170,8 @@ public class MolecularOrbitalSurfaceController : MonoBehaviour {
         //for (int iz = 0; iz < data.GetLength(2); ++iz)
         //    moVal[ix, iy, iz] = data[ix, iy, iz, iMO];
 
-        var surfacePosi = IsosurfaceGenerator.IsosurfaceGen(data[iMO], cubeData.Origin, cubeData.Axes, +0.08, false);
-        var surfaceNega = IsosurfaceGenerator.IsosurfaceGen(data[iMO], cubeData.Origin, cubeData.Axes, -0.08, true);
+        var surfacePosi = IsosurfaceGenerator.IsosurfaceGen(data[iMO], cubeData.Origin, cubeData.Axes, +0.04, false);
+        var surfaceNega = IsosurfaceGenerator.IsosurfaceGen(data[iMO], cubeData.Origin, cubeData.Axes, -0.04, true);
 
         var vertexList = new List<Vector3>();
         var indexList = new List<int>();
