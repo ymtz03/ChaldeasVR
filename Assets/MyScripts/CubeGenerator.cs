@@ -3,29 +3,34 @@ using System;
 
 public class CubeGenerator
 {
-    
-    class BasisSet
-    {
-        int NAtom { get; set; }
-        double[,] AtomPositions { get; set; } // (nAtom,3), arg
+
+    class BasisSet {
+        public int NAtom { get; private set; }
+        public double[,] AtomPositions { get; private set; } // (nAtom,3), arg
         int[] MaxAngularMomentum { get; set; } // Length = nAtom
 
-        int NShell { get; set; }
-        int[] ShellTypes { get; set; }         // Length = nShell, arg
-        int[] NPrimitiveGTO { get; set; }      // Length = nShell, arg
-        int[] ShellToAtomMap { get; set; }     // Length = nShell, arg
-        int[] ShellToExponentMap { get; set; } // Length = nShell
+        public int NShell { get; private set; }
+        public int[] ShellTypes { get; private set; }         // Length = nShell, arg
+        public int[] NPrimitiveGTO { get; private set; }      // Length = nShell, arg
+        public int[] ShellToAtomMap { get; private set; }     // Length = nShell, arg
+        public int[] ShellToExponentMap { get; private set; } // Length = nShell
 
         public readonly int NExponent;
-        double[] PrimitiveExponents { get; set; } // Length = nExponents, arg
-        double[] ContractionCoeffs { get; set; }  // Length = nExponents, arg
-        double[] NormalizedCoeffs { get; set; }   // Length = nExponents
+        public double[] PrimitiveExponents { get; private set; } // Length = nExponents, arg
+        public double[] ContractionCoeffs { get; private set; }  // Length = nExponents, arg
+        public double[] NormalizedCoeffs { get; private set; }   // Length = nExponents
         int[] ExponentToAtomMap { get; set; }     // Length = nExponents
         int[] ExponentToShellMap { get; set; }    // Length = nExponents
 
         public readonly int NAtomicOrb;
 
         double[,] DisplaceFromAtoms { get; set; } // (nAtom,7) = x,y,z,x2,y2,z2,r2
+
+        public static readonly double sqrt3 = Math.Sqrt(3);
+        public static readonly double sqrt5 = Math.Sqrt(5);
+        public static readonly double sqrt0_75 = Math.Sqrt(0.75);
+
+        public Dictionary<int, int> NAOMap { get; private set; }
 
         public BasisSet(
             double[,] atomPositions,
@@ -54,7 +59,7 @@ public class CubeGenerator
 
             // init maps
             {
-                var nAOMap = new System.Collections.Generic.Dictionary<int, int>{
+                NAOMap = new Dictionary<int, int>{
                     {0,1},{1,3},{2,6},{-2,5},{3,10},{-3,7},{4,15},{-4,9},{5,21},{-5,11}
                 };
                 int iep = 0;
@@ -68,7 +73,7 @@ public class CubeGenerator
                     var angularMomentum = Math.Abs(ShellTypes[ish]);
                     MaxAngularMomentum[iatom] = Math.Max(MaxAngularMomentum[iatom], 
                                                                 angularMomentum);
-                    NAtomicOrb += nAOMap[ShellTypes[ish]];
+                    NAtomicOrb += NAOMap[ShellTypes[ish]];
                 }
             }
 
@@ -119,6 +124,153 @@ public class CubeGenerator
                     NormalizedCoeffs[iPGTO] = ContractionCoeffs[iPGTO] 
                         * primitiveGTONomalizeFactors[iep] * contractedGTONormalizeFactor;
                 }
+            }
+        }
+
+        static public double[] EvalShell(
+            int shelltype, double contractedValue, 
+            double dx, double dy, double dz, double dx2, double dy2, double dz2)
+        {
+            double[] retval = null;
+
+            switch (shelltype)
+            {
+                case 0:
+                    retval = new double[1];
+                    retval[0] = contractedValue;
+                    break;
+                case 1:
+                    retval = new double[3];
+                    retval[0] = contractedValue * dx;
+                    retval[1] = contractedValue * dy;
+                    retval[2] = contractedValue * dz;
+                    break;
+                case 2:
+                    retval = new double[6];
+                    retval[0] = contractedValue * dx2;
+                    retval[1] = contractedValue * dy2;
+                    retval[2] = contractedValue * dz2;
+                    retval[3] = contractedValue * dx * dy * sqrt3;
+                    retval[4] = contractedValue * dx * dz * sqrt3;
+                    retval[5] = contractedValue * dy * dz * sqrt3;
+                    break;
+                case -2:
+                    retval = new double[5];
+                    retval[0] = contractedValue * (2 * dz2 - dx2 - dy2) * 0.5;
+                    retval[1] = contractedValue * dx * dz * sqrt3;
+                    retval[2] = contractedValue * dy * dz * sqrt3;
+                    retval[3] = contractedValue * (dx2 - dy2) * sqrt0_75;
+                    retval[4] = contractedValue * dx * dy * sqrt3;
+                    break;
+                case 3:
+                    retval = new double[10];
+                    retval[0] = contractedValue * dx2 * dx;
+                    retval[1] = contractedValue * dy2 * dy;
+                    retval[2] = contractedValue * dz2 * dz;
+                    retval[3] = contractedValue * dx * dy2 * sqrt5;
+                    retval[4] = contractedValue * dx2 * dy * sqrt5;
+                    retval[5] = contractedValue * dx2 * dz * sqrt5;
+                    retval[6] = contractedValue * dx * dz2 * sqrt5;
+                    retval[7] = contractedValue * dy * dz2 * sqrt5;
+                    retval[8] = contractedValue * dy2 * dz * sqrt5;
+                    retval[9] = contractedValue * dx * dy * dz * Math.Sqrt(15);
+                    break;
+                case -3:
+                    retval = new double[7];
+                    retval[0] = contractedValue * dz * (2 * dz2 - 3 * dx2 - 3 * dy2) * 0.5;      // Z(ZZ-RR)
+                    retval[1] = contractedValue * dx * (4 * dz2 - dx2 - dy2) * Math.Sqrt(0.375); // X(ZZ-RR)
+                    retval[2] = contractedValue * dy * (4 * dz2 - dx2 - dy2) * Math.Sqrt(0.375); // Y(ZZ-RR)
+                    retval[3] = contractedValue * dz * (dx2 - dy2) * Math.Sqrt(3.75);            // (XX-YY)Z
+                    retval[4] = contractedValue * dx * dy * dz * Math.Sqrt(15);                  // XYZ
+                    retval[5] = contractedValue * dx * (dx2 - 3 * dy2) * Math.Sqrt(0.625);       // X(XX-YY)
+                    retval[6] = contractedValue * dy * (3 * dx2 - dy2) * Math.Sqrt(0.625);       // Y(XX-YY)
+                    break;
+                case 4:
+                    retval = new double[15];
+                    break;
+                case -4:
+                    retval = new double[9];
+                    break;
+                case 5:
+                    retval = new double[21];
+                    break;
+                case -5:
+                    retval = new double[11];
+                    break;
+                case 6:
+                    retval = new double[28];
+                    break;
+                case -6:
+                    retval = new double[13];
+                    break;
+            }
+
+            return retval;
+        }
+
+        static public void EvalShell_inplace(
+            double[] retval,
+            int shelltype, double contractedValue,
+            double dx, double dy, double dz, double dx2, double dy2, double dz2)
+        {
+            switch (shelltype)
+            {
+                case 0:
+                    retval[0] = contractedValue;
+                    break;
+                case 1:
+                    retval[0] = contractedValue * dx;
+                    retval[1] = contractedValue * dy;
+                    retval[2] = contractedValue * dz;
+                    break;
+                case 2:
+                    retval[0] = contractedValue * dx2;
+                    retval[1] = contractedValue * dy2;
+                    retval[2] = contractedValue * dz2;
+                    retval[3] = contractedValue * dx * dy * sqrt3;
+                    retval[4] = contractedValue * dx * dz * sqrt3;
+                    retval[5] = contractedValue * dy * dz * sqrt3;
+                    break;
+                case -2:
+                    retval[0] = contractedValue * (2 * dz2 - dx2 - dy2) * 0.5;
+                    retval[1] = contractedValue * dx * dz * sqrt3;
+                    retval[2] = contractedValue * dy * dz * sqrt3;
+                    retval[3] = contractedValue * (dx2 - dy2) * sqrt0_75;
+                    retval[4] = contractedValue * dx * dy * sqrt3;
+                    break;
+                case 3:
+                    retval[0] = contractedValue * dx2 * dx;
+                    retval[1] = contractedValue * dy2 * dy;
+                    retval[2] = contractedValue * dz2 * dz;
+                    retval[3] = contractedValue * dx * dy2 * sqrt5;
+                    retval[4] = contractedValue * dx2 * dy * sqrt5;
+                    retval[5] = contractedValue * dx2 * dz * sqrt5;
+                    retval[6] = contractedValue * dx * dz2 * sqrt5;
+                    retval[7] = contractedValue * dy * dz2 * sqrt5;
+                    retval[8] = contractedValue * dy2 * dz * sqrt5;
+                    retval[9] = contractedValue * dx * dy * dz * Math.Sqrt(15);
+                    break;
+                case -3:
+                    retval[0] = contractedValue * dz * (2 * dz2 - 3 * dx2 - 3 * dy2) * 0.5;      // Z(ZZ-RR)
+                    retval[1] = contractedValue * dx * (4 * dz2 - dx2 - dy2) * Math.Sqrt(0.375); // X(ZZ-RR)
+                    retval[2] = contractedValue * dy * (4 * dz2 - dx2 - dy2) * Math.Sqrt(0.375); // Y(ZZ-RR)
+                    retval[3] = contractedValue * dz * (dx2 - dy2) * Math.Sqrt(3.75);            // (XX-YY)Z
+                    retval[4] = contractedValue * dx * dy * dz * Math.Sqrt(15);                  // XYZ
+                    retval[5] = contractedValue * dx * (dx2 - 3 * dy2) * Math.Sqrt(0.625);       // X(XX-YY)
+                    retval[6] = contractedValue * dy * (3 * dx2 - dy2) * Math.Sqrt(0.625);       // Y(XX-YY)
+                    break;
+                case 4:
+                    break;
+                case -4:
+                    break;
+                case 5:
+                    break;
+                case -5:
+                    break;
+                case 6:
+                    break;
+                case -6:
+                    break;
             }
         }
 
@@ -317,7 +469,7 @@ public class CubeGenerator
             }
             if (maxR2 < r2) { maxR2 = r2; }
         }
-        double gridRadius = System.Math.Sqrt(maxR2) + 5;
+        double gridRadius = Math.Sqrt(maxR2) + 5;
 
         for (int iaxis = 0; iaxis < 3; ++iaxis){
             origin[iaxis] = centerOfMass[iaxis] - gridRadius;
@@ -362,8 +514,280 @@ public class CubeGenerator
             }
         }
 
-        System.Console.WriteLine("END CubeGenCore");        
+        Console.WriteLine("END CubeGenCore");        
         return data;
+    }
+
+    public static IEnumerable<float> CubeGenCore_fast(
+        CubeData cubeData, int[] shellTypes, int[] nPrimitiveGTO, int[] shellToAtomMap,
+        double[] primitiveExponents, double[] contractionCoeffs,
+        double[] moCoeffs, int[] iMolecularOrbs)
+    {
+        var sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+
+        int nskip = 0; // for debug
+
+        var basisSet = new BasisSet(
+            cubeData.AtomPositions, shellTypes, nPrimitiveGTO, shellToAtomMap,
+            primitiveExponents, contractionCoeffs);
+
+        int nAtom = basisSet.NAtom;
+        int nAO = basisSet.NAtomicOrb;
+        int nMO = iMolecularOrbs.Length;
+
+        var nVoxels = cubeData.NVoxels;
+        var axes = cubeData.Axes;
+        var origin = cubeData.Origin;
+
+        //var data = new List<double[,,]>();
+        //for (int im = 0; im < nMO; ++im){
+        //    data.Add(new double[cubeData.NVoxels[0], cubeData.NVoxels[1], cubeData.NVoxels[2]]);
+        //}
+        //var data = new double[nMO, nVoxels[0], nVoxels[1], nVoxels[2]];
+        var data = new double[nMO * nVoxels[0] * nVoxels[1] * nVoxels[2]];
+
+        var dw = new List<double[]>(); // dw := w-w0  (w = x,y,z)
+        var dw2 = new List<double[]>(); // dw^2 := (w-w0)^2  (w = x,y,z) 
+
+        var iao = 0;
+
+        for (int ish = 0; ish < basisSet.NShell; ++ish){
+            var iatom = basisSet.ShellToAtomMap[ish] - 1;
+
+            if (ish == 0 || iatom != basisSet.ShellToAtomMap[ish - 1] -1){
+                dw.Clear();
+                dw2.Clear();
+
+                for (int iaxis = 0; iaxis < 3; ++iaxis){
+                    var dwArray = new double[nVoxels[iaxis]];
+                    var dw2Array = new double[nVoxels[iaxis]];
+
+                    double w = origin[iaxis];
+                    for (int iw = 0; iw < nVoxels[iaxis]; ++iw, w += axes[iaxis, iaxis]){
+                        var dw_ = w - basisSet.AtomPositions[iatom, iaxis];
+                        dwArray[iw] = dw_;
+                        dw2Array[iw] = dw_ * dw_;
+                    }
+                    dw.Add(dwArray);
+                    dw2.Add(dw2Array);
+                }
+            }
+
+            var shelltype = basisSet.ShellTypes[ish];
+            var nSubShell = basisSet.NAOMap[shelltype];
+
+            double moCoeff_max = 0;
+            double moCoeff_min = 0;
+            var moCoeff_copy = new double[nMO * nSubShell];
+            int icoeff = 0;
+            for (int im = 0; im < nMO; ++im){
+                int indexMO = iMolecularOrbs[im];
+                int i_bgn = indexMO * nAO + iao;
+                for (int isubshell = 0; isubshell < nSubShell; ++isubshell, icoeff++){
+                    var coeff = moCoeffs[i_bgn + isubshell];
+                    //moCoeff_copy[im, isubshell] = coeff;
+                    moCoeff_copy[icoeff] = coeff;
+
+                    moCoeff_max = Math.Max(moCoeff_max, coeff);
+                    moCoeff_min = Math.Min(moCoeff_min, coeff);
+                }
+            }
+            if(moCoeff_max < 1e-4 && moCoeff_min > -1e-4){
+                UnityEngine.Debug.Log("Skip : " + ish);
+                //iao += nSubShell;
+                //continue;
+            }
+
+
+            // range of indices of exponents & contraction coeffs   -->   iPGTO_bgn <= iPGTO < iPGTO_bgn + nPGTO
+            var nPGTO = basisSet.NPrimitiveGTO[ish];
+            var iPGTO_bgn = basisSet.ShellToExponentMap[ish];
+            var primExponents = new double[nPGTO];
+            var normalizedCoeffs = new double[nPGTO];
+
+            //UnityEngine.Debug.Log(iPGTO_bgn + " " + nPGTO + " " + primExponents.Length + " " + basisSet.PrimitiveExponents.Length);
+
+            for (int iep = 0; iep < nPGTO; ++iep){
+                var iPGTO = iPGTO_bgn + iep;
+                primExponents[iep] = basisSet.PrimitiveExponents[iPGTO];
+                normalizedCoeffs[iep] = basisSet.NormalizedCoeffs[iPGTO];
+            }
+
+            var primGauss_w = new List<double[]>(); // exp(-a*dw^2)  (w = x,y,z)
+            for (int iaxis = 0; iaxis < 3; ++iaxis){
+                var primGaussArray = new double[nVoxels[iaxis] * nPGTO];
+                for (int iep = 0; iep < nPGTO; ++iep)
+                for (int iw = 0; iw < nVoxels[iaxis]; ++iw){
+                    primGaussArray[iw * nPGTO + iep] = Math.Exp(-primExponents[iep] * dw2[iaxis][iw]);
+                }
+                primGauss_w.Add(primGaussArray);
+            }
+
+            var primGauss_buf1 = new double[nPGTO]; // c_i * exp(-a_i * dx^2)
+            var primGauss_buf2 = new double[nPGTO]; // c_i * exp(-a_i * (dx^2 + dy^2))
+            var primGauss_x = primGauss_w[0];
+            var primGauss_y = primGauss_w[1];
+            var primGauss_z = primGauss_w[2];
+
+            var dxArray = dw[0];
+            var dyArray = dw[1];
+            var dzArray = dw[2];
+            var dx2Array = dw2[0];
+            var dy2Array = dw2[1];
+            var dz2Array = dw2[2];
+
+            int iep_;
+            double contractedValue;
+            double[] aoVal = new double[30];
+            int im_=0;
+
+            int id = 0;
+            int ngrid = nVoxels[0] * nVoxels[1] * nVoxels[2];
+
+            for (int ix = 0; ix < nVoxels[0]; ++ix){
+                var dx = dxArray[ix];
+                var dx2 = dx2Array[ix];
+
+                var offset_x = ix * nPGTO;
+                for (iep_ = 0; iep_ < nPGTO; ++iep_){
+                    primGauss_buf1[iep_] = normalizedCoeffs[iep_] * primGauss_x[offset_x + iep_];
+                }
+
+                for (int iy = 0; iy < nVoxels[1]; ++iy){
+                    var dy = dyArray[iy];
+                    var dy2 = dy2Array[iy];
+
+                    var offset_y = iy * nPGTO;
+                    for (iep_ = 0; iep_ < nPGTO; ++iep_){
+                        primGauss_buf2[iep_] = primGauss_buf1[iep_] * primGauss_y[offset_y + iep_];
+                    }
+
+                    for (int iz = 0; iz < nVoxels[2]; ++iz, ++id){
+                        contractedValue = 0; // sum_i c_i * exp(-a_i * dr^2)
+                        var offset_z = iz * nPGTO;
+                        for (iep_ = 0; iep_ < nPGTO; ++iep_){
+                            contractedValue += primGauss_buf2[iep_] * primGauss_z[offset_z + iep_];
+                        }
+                        //if(contractedValue < 1e-10 && contractedValue > -1e-10){ nskip++; continue; }
+
+                        //aoVal = BasisSet.EvalShell(basisSet.ShellTypes[ish], contractedValue,
+                        //dx, dy, dzArray[iz], dx2, dy2, dz2Array[iz]);
+
+                        //BasisSet.EvalShell_inplace(aoVal, shelltype, contractedValue,
+                        //                           dx, dy, dzArray[iz], dx2, dy2, dz2Array[iz]);
+
+
+                        switch (shelltype)
+                        {
+                            case 0:
+                                aoVal[0] = contractedValue;
+                                break;
+                            case 1:
+                                aoVal[0] = contractedValue * dx;
+                                aoVal[1] = contractedValue * dy;
+                                aoVal[2] = contractedValue * dzArray[iz];
+                                break;
+                            case 2:
+                                aoVal[0] = contractedValue * dx2;
+                                aoVal[1] = contractedValue * dy2;
+                                aoVal[2] = contractedValue * dz2Array[iz];
+                                aoVal[3] = contractedValue * dx * dy * BasisSet.sqrt3;
+                                aoVal[4] = contractedValue * dx * dzArray[iz] * BasisSet.sqrt3;
+                                aoVal[5] = contractedValue * dy * dzArray[iz] * BasisSet.sqrt3;
+                                break;
+                            case -2:
+                                aoVal[0] = contractedValue * (2 * dz2Array[iz] - dx2 - dy2) * 0.5;
+                                aoVal[1] = contractedValue * dx * dzArray[iz] * BasisSet.sqrt3;
+                                aoVal[2] = contractedValue * dy * dzArray[iz] * BasisSet.sqrt3;
+                                aoVal[3] = contractedValue * (dx2 - dy2) * BasisSet.sqrt0_75;
+                                aoVal[4] = contractedValue * dx * dy * BasisSet.sqrt3;
+                                break;
+                            case 3:
+                                aoVal[0] = contractedValue * dx2 * dx;
+                                aoVal[1] = contractedValue * dy2 * dy;
+                                aoVal[2] = contractedValue * dz2Array[iz] * dzArray[iz];
+                                aoVal[3] = contractedValue * dx * dy2 * BasisSet.sqrt5;
+                                aoVal[4] = contractedValue * dx2 * dy * BasisSet.sqrt5;
+                                aoVal[5] = contractedValue * dx2 * dzArray[iz] * BasisSet.sqrt5;
+                                aoVal[6] = contractedValue * dx * dz2Array[iz] * BasisSet.sqrt5;
+                                aoVal[7] = contractedValue * dy * dz2Array[iz] * BasisSet.sqrt5;
+                                aoVal[8] = contractedValue * dy2 * dzArray[iz] * BasisSet.sqrt5;
+                                aoVal[9] = contractedValue * dx * dy * dzArray[iz] * Math.Sqrt(15);
+                                break;
+                            case -3:
+                                aoVal[0] = contractedValue * dzArray[iz] * (2 * dz2Array[iz] - 3 * dx2 - 3 * dy2) * 0.5;      // Z(ZZ-RR)
+                                aoVal[1] = contractedValue * dx * (4 * dz2Array[iz] - dx2 - dy2) * Math.Sqrt(0.375); // X(ZZ-RR)
+                                aoVal[2] = contractedValue * dy * (4 * dz2Array[iz] - dx2 - dy2) * Math.Sqrt(0.375); // Y(ZZ-RR)
+                                aoVal[3] = contractedValue * dzArray[iz] * (dx2 - dy2) * Math.Sqrt(3.75);            // (XX-YY)Z
+                                aoVal[4] = contractedValue * dx * dy * dzArray[iz] * Math.Sqrt(15);                  // XYZ
+                                aoVal[5] = contractedValue * dx * (dx2 - 3 * dy2) * Math.Sqrt(0.625);       // X(XX-YY)
+                                aoVal[6] = contractedValue * dy * (3 * dx2 - dy2) * Math.Sqrt(0.625);       // Y(XX-YY)
+                                break;
+                            case 4:
+                                break;
+                            case -4:
+                                break;
+                            case 5:
+                                break;
+                            case -5:
+                                break;
+                            case 6:
+                                break;
+                            case -6:
+                                break;
+                        }
+
+                        //for (im_ = 0; im_ < nMO; ++im_){
+                            double moVal = 0;
+                            for (int isubshell = 0; isubshell < nSubShell; ++isubshell){
+                                //moVal += moCoeff_copy[im_ * nSubShell + isubshell] * aoVal[isubshell];
+                                moVal += moCoeff_copy[isubshell] * aoVal[isubshell];
+                            }
+                            //data[im_, ix, iy, iz] += moVal;
+                            //data[im_ * ngrid + id] += moVal;
+                            data[id] += moVal;
+                        //}
+                            
+                    }
+                } // iy
+
+                //if(sw.Elapsed > TimeSpan.FromSeconds(0.010)){
+                    //sw.Stop();
+                    //sw.Reset();
+                    //yield return (float)(ish) / basisSet.NShell;
+                    //sw.Start();
+                //}
+
+            } // ix
+
+            iao += nSubShell;
+
+            yield return (float)(ish+1) / basisSet.NShell;
+
+        } // ishell
+
+        cubeData.Data = new List<double[,,]>();
+        for (int im = 0; im < nMO; ++im){
+            var data_ = new double[nVoxels[0], nVoxels[1], nVoxels[2]];
+
+            int id = 0;
+            int ngrid = nVoxels[0] * nVoxels[1] * nVoxels[2];
+            for (int ix = 0; ix < nVoxels[0]; ++ix)
+            for (int iy = 0; iy < nVoxels[1]; ++iy)
+            for (int iz = 0; iz < nVoxels[2]; ++iz, ++id)
+                        data_[ix, iy, iz] = data[im * ngrid + id];
+                //data_[ix, iy, iz] = data[im, ix, iy, iz];
+
+            cubeData.Data.Add(data_);
+        }
+
+        sw.Stop();
+
+        UnityEngine.Debug.Log("skip  " + nskip);
+        UnityEngine.Debug.Log("total " + basisSet.NShell * nVoxels[0] * nVoxels[1] * nVoxels[2]);
+
+        yield return 1;
     }
 
     public static IEnumerable<float> CubeGenCore(
@@ -391,18 +815,22 @@ public class CubeGenerator
         int interval = 10000;
         int next_yield = interval;
 
+        var sw = new System.Diagnostics.Stopwatch();
+
         pos[0] = cubeData.Origin[0];
         for (int ix = 0; ix < cubeData.NVoxels[0]; ++ix, pos[0] += cubeData.Axes[0, 0]){
             pos[1] = cubeData.Origin[1];
             for (int iy = 0; iy < cubeData.NVoxels[1]; ++iy, pos[1] += cubeData.Axes[1, 1]){
                 pos[2] = cubeData.Origin[2];
                 for (int iz = 0; iz < cubeData.NVoxels[2]; ++iz, pos[2] += cubeData.Axes[2, 2]){
+                    sw.Start();
                     double[] valueAO = basisSet.Eval(pos);
+                    sw.Stop();
+
                     for (int im = 0; im < nMO; ++im){
                         int indexMO = iMolecularOrbs[im];
                         double valueMO = 0;
-                        for (int iao = 0; iao < nAO; ++iao)
-                        {
+                        for (int iao = 0; iao < nAO; ++iao){
                             valueMO += moCoeffs[indexMO * nAO + iao] * valueAO[iao];
                         }
                         data[im][ix, iy, iz] = valueMO;
@@ -412,7 +840,10 @@ public class CubeGenerator
                 progress += cubeData.NVoxels[2] * nMO * nAO;
                 if(progress>next_yield){
                     next_yield = progress + interval;
-                    yield return (float)progress / (float)progress_total;
+
+                    UnityEngine.Debug.Log("Elapsed(evalAO)"+sw.Elapsed);
+                    //sw.Reset();
+                    yield return (float)progress / progress_total;
                 }
             }
         }
@@ -420,7 +851,7 @@ public class CubeGenerator
         cubeData.Data = data;
 
         Console.WriteLine("END CubeGenCore");
-        yield return 1f;   
+        yield return 1f;
     }
 
     public static IEnumerable<float> CubeGen(CubeData cubeData, FchkData fchkData, int[] iMolecularOrbs, int nVoxel){
@@ -437,6 +868,7 @@ public class CubeGenerator
 
         // THIS SECTION IS FOR DEBUG !! DELETE HERE LATER-----
         cubeData.NVoxels = new int[] { 60, 60, 60 };
+        //cubeData.NVoxels = new int[] { 50, 50, 50 };
         //origin  = new double[] {-4.970736,   -4.970736,   -4.970736};
         cubeData.Origin = new double[] { -7.157859, -7.157859, -7.157859 };
         cubeData.Axes = new double[3, 3];
@@ -451,13 +883,21 @@ public class CubeGenerator
 
         yield return 0f;
 
-        foreach(float progress in CubeGenCore(
+        var sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+
+        foreach(float progress in CubeGenCore_fast(
             cubeData, fchkData.ShellTypes, fchkData.NPrimitiveGTO, fchkData.ShellToAtomMap,
             fchkData.PrimitiveExponents, fchkData.ContractionCoeffs,
             fchkData.AlphaMOCoeffs, iMolecularOrbs))
         {
+            sw.Stop();
+            UnityEngine.Debug.Log("Elapsed : "+sw.Elapsed);
             yield return progress;
+            sw.Start();
         }
+        sw.Stop();
+        UnityEngine.Debug.Log("Elapsed(total) : " + sw.Elapsed);
 
         cubeData.NVal = iMolecularOrbs.Length;
         cubeData.ContainDsetIds = true;
@@ -493,7 +933,8 @@ public class CubeGenerator
         GetGridParams(atomPositions, nVoxels, origin, axes);
 
         // THIS SECTION IS FOR DEBUG !! DELETE HERE LATER-----
-        nVoxels = new int[] { 60, 60, 60 };
+        //nVoxels = new int[] { 60, 60, 60 };
+        nVoxels = new int[] { 50, 50, 50 };
         //origin  = new double[] {-4.970736,   -4.970736,   -4.970736};
         origin = new double[] { -7.157859, -7.157859, -7.157859 };
         axes = new double[3, 3];
