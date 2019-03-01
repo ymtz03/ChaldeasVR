@@ -444,6 +444,11 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -961,6 +966,11 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -1251,6 +1261,11 @@ Prefab:
       propertyPath: m_Name
       value: UIToggleSwitchText
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -1415,6 +1430,11 @@ Prefab:
       propertyPath: m_Size.y
       value: 0.8
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -1568,6 +1588,11 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -1664,7 +1689,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 5945ea0415a154d53a48bb5e6ded0364, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1952,6 +1977,11 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -2197,6 +2227,11 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -2340,6 +2375,11 @@ Prefab:
         type: 2}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
@@ -2595,6 +2635,11 @@ Prefab:
       propertyPath: m_Color.b
       value: 0.995283
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -2797,6 +2842,11 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -2940,6 +2990,11 @@ Prefab:
         type: 2}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
@@ -3385,6 +3440,11 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -3819,6 +3879,11 @@ Prefab:
       propertyPath: m_Size.y
       value: 0.8
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -3992,6 +4057,11 @@ Prefab:
         type: 2}
       propertyPath: m_Size.y
       value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
@@ -4618,6 +4688,11 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -5044,6 +5119,11 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
   m_IsPrefabAsset: 0
@@ -5233,6 +5313,11 @@ Prefab:
         type: 2}
       propertyPath: m_Size.y
       value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114179957012261156, guid: 6055022a9267c49408877a2f64f1866d,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6055022a9267c49408877a2f64f1866d, type: 2}
