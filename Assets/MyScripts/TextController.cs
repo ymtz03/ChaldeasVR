@@ -3,47 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TextController : MonoBehaviour {
+    // Singleton pattern
 
-    public UnityEngine.UI.Text welcomeLabel;
-    public string defaultStr;
-    int count;
+    [SerializeField]
+    public UnityEngine.UI.Text text;
 
-    static string message = "Hello!!";
+    static UnityEngine.UI.Text text_static;
+    static float time_display;
 
 	// Use this for initialization
-	void Start () {
-        //defaultStr = welcomeLabel.text;
-        count = 0;
-
-        //UnityEngine.XR.XRDevice.DisableAutoXRCameraTracking(mainCamera, false);
-	}
+    void Start () {
+        text_static = text;
+    }
 	
 	// Update is called once per frame
 	void Update () {
-        //mainCamera.transform.Translate(0.0f, 0.0f, 0.01f); 
-
-        if(Input.GetKey(KeyCode.B)){
-            //welcomeLabel.text = "B : " + count.ToString();
-            welcomeLabel.text = "B : " + Camera.main.transform.forward.x;
-            Debug.Log("mainCamera.forward(x,y,z) = (" 
-                      + Camera.main.transform.forward.x + ","
-                      + Camera.main.transform.forward.y + ","
-                      + Camera.main.transform.forward.z + ")");
-
-            count++;
-            //mainCamera.transform.Translate(-0.5f, 0f, 0f);
-            //mainCamera.transform.position = new Vector3(-0.5f, 1.2f, 0f);
-        }else{
-            //welcomeLabel.text = defaultStr;
-            float num = 1.2345f;
-            welcomeLabel.text = "n " + num.ToString("f2");
-            count = 0;
-        }
-
-        welcomeLabel.text = message;
-	}
+        time_display -= Time.deltaTime;
+        if(time_display < 0){ gameObject.SetActive(false); }
+    }
 
     public static void SetText(string newMessage){
-        message = newMessage;
+        if(text_static != null){
+            text_static.text = newMessage;
+            text_static.transform.parent.gameObject.SetActive(true);
+            time_display = 3f;
+        }
     }
 }
