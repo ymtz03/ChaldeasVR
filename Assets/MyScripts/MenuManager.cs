@@ -33,6 +33,8 @@ public class MenuManager : MonoBehaviour {
     int nPage_MO;
     int currentPage_MO;
 
+    public static bool exist_running_coroutine;
+
 	// Use this for initialization
     void Start () {
         pwdPath = Application.persistentDataPath;
@@ -100,27 +102,30 @@ public class MenuManager : MonoBehaviour {
         var ifile = currentPage_file * slider_file.Length + sliderid;
         Debug.Log("UpdateMO : " + ifile + " : " + filenamelist[ifile]);
 
-        if (ifile < filenamelist.Count){
-            var filefullpath = filenamelist[ifile];
-            var extension = System.IO.Path.GetExtension(filefullpath);
-            TextController.SetText("Extensiton : " + extension);
+        if (!(ifile < filenamelist.Count)) { return; } 
+            
+        var filefullpath = filenamelist[ifile];
+        var extension = System.IO.Path.GetExtension(filefullpath);
+        TextController.SetText("Extensiton : " + extension);
 
-            MoleculeController moleculeController = Molecule.GetComponent<MoleculeController>();
-
-            switch (extension)
-            {
-                case ".x3d":
-                    moleculeController.LoadX3D(filefullpath);
-                    break;
-                case ".fchk":
-                    //moleculeController.LoadFchk(filefullpath);
-                    moleculeController.StartCoroutine(moleculeController.LoadFchkCoroutine(filefullpath));
-                    break;
-                case ".cube":
-                    //Molecule.GetComponent<MoleculeController>().LoadCube(filefullpath);
-                    moleculeController.StartCoroutine(moleculeController.LoadCubeCoroutine(filefullpath));
-                    break;
-            }
+        var molCtr = Molecule.GetComponent<MoleculeController>();
+        switch (extension)
+        {
+            case ".x3d":
+                molCtr.LoadX3D(filefullpath);
+                break;
+            case ".fchk":
+                //moleculeController.LoadFchk(filefullpath);
+                if (exist_running_coroutine) { return; }
+                molCtr.StartCoroutine(molCtr.LoadFchkCoroutine(filefullpath));
+                exist_running_coroutine = true;
+                break;
+            case ".cube":
+                //Molecule.GetComponent<MoleculeController>().LoadCube(filefullpath);
+                if (exist_running_coroutine) { return; }
+                molCtr.StartCoroutine(molCtr.LoadCubeCoroutine(filefullpath));
+                exist_running_coroutine = true;
+                break;
         }
     }
 
@@ -227,7 +232,7 @@ public class MenuManager : MonoBehaviour {
         Debug.Log("UpdateMO : " + iMO);
 
         var molCtr = Molecule.GetComponent<MoleculeController>();
-        molCtr.ChangeSurface(iMO);
+        molCtr.DrawSurface(iMO);
 
         UpdateSliderColor();
     }

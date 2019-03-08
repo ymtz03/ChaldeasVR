@@ -119,6 +119,8 @@ public class MoleculeController : MonoBehaviour {
         //MOSurfaceCtr.gameObject.GetComponent<Renderer>().
         //DrawSurface();
         menuManager.SetDsetIdToSlider();
+
+        MenuManager.exist_running_coroutine = false;
     }
 
     public IEnumerable<float> CubeGenCoroutine_Core(int[] iLoadMO){
@@ -150,6 +152,7 @@ public class MoleculeController : MonoBehaviour {
         iMO = iLoadMO[0];
         DrawSurface(iMO);
         menuManager.UpdateSliderColor();
+        MenuManager.exist_running_coroutine = false;
     }
 
     /*
@@ -185,9 +188,13 @@ public class MoleculeController : MonoBehaviour {
         MolStructureCtr.SetStructure(m_CubeData);
         DrawSurface(iMO);
         menuManager.SetDsetIdToSlider();
+
+        MenuManager.exist_running_coroutine = false;
     }
 
     public void DrawSurface(int iMO){
+        if (iMO < 0 || nMO <= iMO ){ return; }
+
         if (IsLoaded[iMO]){
             var dsetId = DsetIds[iMO];
             var kMO = m_CubeData.DsetIds.IndexOf(dsetId);
@@ -197,23 +204,11 @@ public class MoleculeController : MonoBehaviour {
             this.iMO = iMO;
         }
         else{
-            TextController.SetText(iMO.ToString() + " is not loaded.");
+            if (MenuManager.exist_running_coroutine) { return; }
             StartCoroutine(CubeGenCoroutine(new int[] { iMO }));
+            MenuManager.exist_running_coroutine = true;
         }
         //TextController.SetText("MO" + m_CubeData.DsetIds[iMO]);
-    }
-
-    public void ChangeSurface(){
-        if (nMO>0){
-            iMO = (iMO + 1) % nMO;
-            DrawSurface(iMO);
-        }
-    }
-
-    public void ChangeSurface(int iMO){
-        if (0 <= iMO && iMO < nMO){
-            DrawSurface(iMO);
-        }
     }
 
 }
