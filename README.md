@@ -52,6 +52,7 @@ PCの場合はキーボードで操作できます。
 |白色|ロード済|
 |緑色|ロード済（現在表示中）|
 
+<img src="https://user-images.githubusercontent.com/33852087/54669036-b397dc00-4b33-11e9-9a05-6fed722eee5a.gif" width=450px>
 
 ## ダウンロード (ソースコード)
 
@@ -62,5 +63,5 @@ PCの場合はキーボードで操作できます。
 プロジェクトの中で[Oculus Integration](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022)のアセットを使用しているので、ビルドする際はインポートしてもらう必要があります（Oculus Integration ver 1.34 で動作確認しました）。
 インポートする必要があるのはOculus/VR以下だけです。
 
-Macの場合  
-コンパイルエラーになる場合があるらしいので[こちら](https://qiita.com/Sam/items/d050db69b5e2a4929672)などを参考にスクリプトを書き換えてください。
+#### Macの場合  
+`Oculus/VR/Scripts/OVRPlugin.cs`がコンパイルエラーになる場合があるらしいので[こちら](https://qiita.com/Sam/items/d050db69b5e2a4929672)などを参考にスクリプトを書き換えてください。
