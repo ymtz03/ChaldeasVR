@@ -14,15 +14,12 @@ MacOS用の .app 形式と Android用 .apk 形式の実行ファイルをダウ�
 
 ### 起動
 
-可視化したいfchkまたはcube形式のファイルをpersisitent datapath直下に置いて起動してください。persistent datapathはOSによって異なります。[こちら](https://docs.unity3d.com/ScriptReference/Application-persistentDataPath.html)を参考にしてください。  
+可視化したいfchkまたはcube形式のファイルをpersisitent datapath直下に置いて起動してください。persistent datapathはOSによって異なり、MacOSとAndroidの場合はそれぞれ以下の場所です。
 
-* company name : `ymtz03`
-* product name : `ChaldeasVR`
+MacOS : `~/Library/Application Support/ymtz03/ChaldeasVR/`  
+Android : `/storage/emulated/0/Android/data/tk.ymtz03.ChaldeasVR/files/`
 
-です。
-例えばMacOSの場合は
-`~/Library/Application Support/ymtz03/ChaldeasVR/`
-になります。
+（詳しくは[公式ドキュメント](https://docs.unity3d.com/ScriptReference/Application-persistentDataPath.html)を参考にしてください。）
 
 ### 操作
 VRデバイスを使う場合は機器の向きで操作します。  
